@@ -1,0 +1,24 @@
+# Snakemake
+.snakemake/
+*.log
+*.tmp
+
+
+# Data
+data/
+results/
+
+# Environnements
+.env
+*.conda
+*.yaml
+
+# Python
+__pycache__/
+*.pyc
+
+cogaps/workflow/.snakemake/
+cogaps/results
+rcppml/workflow/.snakemake/
+rcppml/data/
+rcppml/output

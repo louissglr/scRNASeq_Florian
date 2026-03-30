@@ -1,0 +1,45 @@
+nohup: ignoring input
+Using profiles profiles/default/ and workflow specific profile profiles/default for setting default command line arguments.
+Config file ../config/config-glicid-scratch.yml is extended by additional config specified via the command line.
+host: nautilus-devel-001
+Building DAG of jobs...
+Your conda installation is not configured to use strict channel priorities. This is however important for having robust and correct environments (for details, see https://conda-forge.org/docs/user/tipsandtricks.html). Please consider to configure strict priorities by executing 'conda config --set channel_priority strict'.
+SLURM run ID: cec6148a-79d3-485f-af1a-3ab6700560e0
+Using shell: /usr/bin/bash
+Provided remote nodes: 300
+Job stats:
+job                       count
+----------------------  -------
+all                           1
+plot_hallmarks_heatmap        1
+total                         2
+
+Select jobs to execute...
+Execute 1 jobs...
+
+[Mon Mar 23 15:24:24 2026]
+rule plot_hallmarks_heatmap:
+    input: /scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/rcppml/output/4T1_S+_5000HVG/programs_10/hallmarks/enrichment/4T1_S+_5000HVG.nprograms-10.hallmark_enrichment.csv
+    output: /scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/rcppml/output/4T1_S+_5000HVG/programs_10/hallmarks/enrichment/4T1_S+_5000HVG.nprograms-10.hallmarks_enrichment_heatmap.pdf
+    jobid: 8
+    reason: Code has changed since last execution
+    wildcards: sample=4T1_S+_5000HVG, nprograms=10
+    resources: mem_mb=32000, mem_mib=30518, disk_mb=1000, disk_mib=954, tmpdir=<TBD>, runtime=60, clusters=nautilus, slurm_account=crci2na, slurm_partition=all, slurm_extra=--qos=quick
+Job 8 has been submitted with SLURM jobid 10180258 (log: /scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/rcppml/pipeline/workflow/.snakemake/slurm_logs/rule_plot_hallmarks_heatmap/4T1_S+_5000HVG_10/10180258.log).
+[Mon Mar 23 15:25:04 2026]
+Finished jobid: 8 (Rule: plot_hallmarks_heatmap)
+1 of 2 steps (50%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Mon Mar 23 15:25:04 2026]
+localrule all:
+    input: /scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/rcppml/output/4T1_S+_5000HVG/programs_10/contributions/4T1_S+_5000HVG.nprograms-10.contributions_cells.txt, /scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/rcppml/output/4T1_S+_5000HVG/programs_10/contributions/4T1_S+_5000HVG.nprograms-10.contributions_genes.txt, /scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/rcppml/output/4T1_S+_5000HVG/programs_10/umap/coo/4T1_S+_5000HVG.nprograms-10.nmf.umap-coords.txt, /scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/rcppml/output/4T1_S+_5000HVG/programs_10/umap/dominant/4T1_S+_5000HVG.nprograms-10.UMAP_dominant_nmf.pdf, /scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/rcppml/output/4T1_S+_5000HVG/programs_10/umap/weight/4T1_S+_5000HVG.nprograms-10.UMAP_weight_nmf.pdf, /scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/rcppml/output/4T1_S+_5000HVG/programs_10/umap/dominant/infos/4T1_S+_5000HVG.nprograms-10.nb_cells.pdf, /scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/rcppml/output/4T1_S+_5000HVG/programs_10/hallmarks/enrichment/4T1_S+_5000HVG.nprograms-10.hallmark_enrichment.csv, /scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/rcppml/output/4T1_S+_5000HVG/programs_10/hallmarks/enrichment/4T1_S+_5000HVG.nprograms-10.hallmarks_enrichment_heatmap.pdf, /scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/rcppml/output/4T1_S+_5000HVG/programs_10/markers/manualy/4T1_S+_5000HVG.nprograms-10.markers_manualy.csv, /scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/rcppml/output/4T1_S+_5000HVG/programs_10/markers/seurat/4T1_S+_5000HVG.nprograms-10.markers_seurat.xlsx
+    jobid: 0
+    reason: Input files updated by another job: /scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/rcppml/output/4T1_S+_5000HVG/programs_10/hallmarks/enrichment/4T1_S+_5000HVG.nprograms-10.hallmarks_enrichment_heatmap.pdf
+    resources: mem_mb=32000, mem_mib=30518, disk_mb=1000, disk_mib=954, tmpdir=/tmp, runtime=60, clusters=nautilus, slurm_account=crci2na, slurm_partition=all, slurm_extra=--qos=quick
+[Mon Mar 23 15:25:04 2026]
+Finished jobid: 0 (Rule: all)
+2 of 2 steps (100%) done
+Cleaning up log files older than 10 day(s).
+Complete log(s): /scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/rcppml/pipeline/workflow/.snakemake/log/2026-03-23T152422.627653.snakemake.log

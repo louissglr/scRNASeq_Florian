@@ -1,0 +1,51 @@
+name: cogaps
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - r-base=4.4
+
+  # Core tidyverse
+  - r-dplyr
+  - r-tidyr
+  - r-tibble
+  - r-readr
+  - r-stringr
+  - r-forcats
+  - r-purrr
+  - r-ggplot2
+  - r-tidyverse
+  - r-tidytext
+  - r-ggtext
+ 
+  # Excel I/O
+  - r-readxl
+  - r-openxlsx
+  - r-writexl
+
+  # Misc R
+  - grid
+  - r-gtools
+
+  # Single-cell
+  - r-seurat
+
+  # Visualization
+  - bioconductor-complexheatmap
+  - r-complexupset
+  - r-circlize
+  - r-viridis
+
+  # CoGAPS
+  - bioconductor-cogaps=3.26.0
+
+  # Enrichment
+  - bioconductor-clusterprofiler
+  - bioconductor-enrichplot
+  - r-msigdbr
+  - bioconductor-org.hs.eg.db
+
+  - r-ggpubr
+  - r-clustree

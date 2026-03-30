@@ -1,0 +1,7 @@
+dataDir: "/scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/data/subset_object"
+cogapsOutDir: "/scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/cogaps/results"
+mayaOutDir: "/scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/cogaps/results"
+nPatternsRange: [8,9,10]
+cogapsIterations: 50000
+metadataDir: "/scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/data/metadata"
+signatureDir: "/scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/data/signatures"

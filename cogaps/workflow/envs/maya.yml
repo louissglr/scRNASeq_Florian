@@ -1,0 +1,27 @@
+name: maya
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - r-base=4.3
+  - r-devtools
+  - r-remotes
+  - r-matrix
+  - r-dplyr
+  - r-ggplot2
+  - r-umap
+  - r-igraph
+  - r-rann
+  - r-pheatmap
+  - r-viridis
+  - r-leidenbase
+  - r-wesanderson
+  - git
+  - r-seurat
+  - r-msigdbr
+  - r-dplyr
+  - r-tibble
+  - r-base
+  - r-remotes
+  - pip
+  - gcc 

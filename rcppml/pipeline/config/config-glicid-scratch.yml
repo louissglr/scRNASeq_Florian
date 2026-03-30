@@ -1,0 +1,31 @@
+# -------------------
+# Dossier contenant les Seurat objects
+# -------------------
+dataDir: "/scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/rcppml/data/RcppML"
+
+# -------------------
+# Dossier de base où se trouvent les modèles RcppML
+# -------------------
+rcppmlOutDir: "/scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/rcppml/data/RcppML"
+
+pipelineOutDir: "/scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/rcppml/output"  
+
+# -------------------
+# Samples à traiter
+# -------------------
+samples:
+#  - "sample"
+   - "4T1_S+_5000HVG"
+#  - "4T1_S-_5000HVG"
+
+# -------------------
+# Plage de k (programmes NMF)
+# -------------------]
+nProgramsRange: [10]
+
+
+# -------------------
+# metadata
+# -------------------
+
+metadataDir: "/scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/data/metadata"

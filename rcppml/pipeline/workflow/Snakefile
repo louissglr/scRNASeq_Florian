@@ -1,0 +1,215 @@
+configfile: "../config/config-glicid-scratch.yml"
+
+SAMPLES        = config["samples"]
+NPROGRAMS      = config["nProgramsRange"]
+RCPPML_BASE    = config["rcppmlOutDir"]
+OUT_PIPELINE   = config["pipelineOutDir"]
+DATA_DIR       = config["dataDir"]
+
+rule all:
+    input:
+        expand(
+            OUT_PIPELINE + "/{sample}/programs_{nprograms}/contributions/{sample}.nprograms-{nprograms}.contributions_cells.txt",
+            sample=SAMPLES,
+            nprograms=NPROGRAMS
+        ),
+        expand(
+            OUT_PIPELINE + "/{sample}/programs_{nprograms}/contributions/{sample}.nprograms-{nprograms}.contributions_genes.txt",
+            sample=SAMPLES,
+            nprograms=NPROGRAMS
+        ),
+        expand(
+            OUT_PIPELINE + "/{sample}/programs_{nprograms}/umap/coo/{sample}.nprograms-{nprograms}.nmf.umap-coords.txt",
+            sample=SAMPLES,
+            nprograms=NPROGRAMS
+        ),
+
+        expand(
+            OUT_PIPELINE + "/{sample}/programs_{nprograms}/umap/dominant/{sample}.nprograms-{nprograms}.UMAP_dominant_{dataset}.pdf",
+            sample=SAMPLES,
+            nprograms=NPROGRAMS,
+            dataset=["nmf"]
+        ),
+
+        expand(
+            OUT_PIPELINE + "/{sample}/programs_{nprograms}/umap/weight/{sample}.nprograms-{nprograms}.UMAP_weight_{dataset}.pdf",
+            sample=SAMPLES,
+            nprograms=NPROGRAMS,
+            dataset=["nmf"]
+        ),
+
+        expand(
+            OUT_PIPELINE + "/{sample}/programs_{nprograms}/umap/dominant/infos/{sample}.nprograms-{nprograms}.nb_cells.pdf",
+            sample=SAMPLES,
+            nprograms=NPROGRAMS
+        ),
+
+        expand(
+            OUT_PIPELINE + "/{sample}/programs_{nprograms}/hallmarks/enrichment/{sample}.nprograms-{nprograms}.hallmark_enrichment.csv",
+            sample=SAMPLES,
+            nprograms=NPROGRAMS
+        ),
+
+        expand(
+            OUT_PIPELINE + "/{sample}/programs_{nprograms}/hallmarks/enrichment/{sample}.nprograms-{nprograms}.hallmarks_enrichment_heatmap.pdf",
+            sample=SAMPLES,
+            nprograms=NPROGRAMS
+        ),
+
+        expand(
+            OUT_PIPELINE + "/{sample}/programs_{nprograms}/markers/manualy/{sample}.nprograms-{nprograms}.markers_manualy.csv",
+            sample=SAMPLES,
+            nprograms=NPROGRAMS
+        ),
+
+        expand(
+            OUT_PIPELINE + "/{sample}/programs_{nprograms}/markers/seurat/{sample}.nprograms-{nprograms}.markers_seurat.xlsx",
+            sample=SAMPLES,
+            nprograms=NPROGRAMS
+        ),
+ 
+        # expand(
+        #     OUT_PIPELINE + "/{sample}/programs_{nprograms}/{sample}_GO_enrichment_k{nprograms}.pdf",
+        #     sample=SAMPLES,
+        #     nprograms=NPROGRAMS
+        # )
+
+
+rule cells_contribution:
+    input:
+        seurat_rds = DATA_DIR + "/{sample}/{sample}.seurat-object.rds",
+        rcppml_rds = RCPPML_BASE + "/{sample}/NMF_k{nprograms}/NMF_model_k{nprograms}.rds"
+    output:
+        tsv=OUT_PIPELINE + "/{sample}/programs_{nprograms}/contributions/{sample}.nprograms-{nprograms}.contributions_cells.txt"
+    conda:
+        "envs/rcppml.yml"
+    threads: 1
+    script:
+        "scripts/cells_contribution.R"
+
+rule genes_contribution:
+    input:
+        seurat_rds = DATA_DIR + "/{sample}/{sample}.seurat-object.rds",
+        rcppml_rds = RCPPML_BASE + "/{sample}/NMF_k{nprograms}/NMF_model_k{nprograms}.rds"
+    output:
+        tsv = OUT_PIPELINE + "/{sample}/programs_{nprograms}/contributions/{sample}.nprograms-{nprograms}.contributions_genes.txt"
+    threads: 1
+    conda:
+        "envs/rcppml.yml"
+    script:
+        "scripts/genes_contribution.R"
+
+rule reduce_dim_cogaps:
+    input:
+        contrib_tsv=OUT_PIPELINE + "/{sample}/programs_{nprograms}/contributions/{sample}.nprograms-{nprograms}.contributions_cells.txt",
+    output:
+        tsv=OUT_PIPELINE + "/{sample}/programs_{nprograms}/umap/coo/{sample}.nprograms-{nprograms}.nmf.umap-coords.txt",
+    conda:
+        "envs/rcppml.yml"
+    threads: 1
+    script:
+        "scripts/reduce_dim.R"
+
+rule umap_dominant:
+    input:
+        contributions = OUT_PIPELINE + "/{sample}/programs_{nprograms}/contributions/{sample}.nprograms-{nprograms}.contributions_cells.txt",
+        umap = OUT_PIPELINE + "/{sample}/programs_{nprograms}/umap/coo/{sample}.nprograms-{nprograms}.nmf.umap-coords.txt"
+    output:
+        pdf = OUT_PIPELINE + "/{sample}/programs_{nprograms}/umap/dominant/{sample}.nprograms-{nprograms}.UMAP_dominant_{dataset}.pdf"
+    params:
+        dataset = "{dataset}"
+    wildcard_constraints:
+        dataset = "nmf"
+    conda:
+        "envs/rcppml.yml"
+    script:
+        "scripts/plot_umap_dominant.R"
+
+
+rule umap_weight:
+    input:
+        contributions = OUT_PIPELINE + "/{sample}/programs_{nprograms}/contributions/{sample}.nprograms-{nprograms}.contributions_cells.txt",
+        umap = OUT_PIPELINE + "/{sample}/programs_{nprograms}/umap/coo/{sample}.nprograms-{nprograms}.nmf.umap-coords.txt"
+    output:
+        pdf = OUT_PIPELINE + "/{sample}/programs_{nprograms}/umap/weight/{sample}.nprograms-{nprograms}.UMAP_weight_{dataset}.pdf"
+    params:
+        dataset = "{dataset}"
+    wildcard_constraints:
+        dataset = "nmf"
+    conda:
+        "envs/rcppml.yml"
+    script:
+        "scripts/plot_umap_weight.R"
+
+
+rule nb_cells:
+    input:
+        contrib = OUT_PIPELINE + "/{sample}/programs_{nprograms}/contributions/{sample}.nprograms-{nprograms}.contributions_cells.txt",
+        metadata  = config["metadataDir"]+ "/meta_subset.tsv",
+    output:
+        pdf = OUT_PIPELINE + "/{sample}/programs_{nprograms}/umap/dominant/infos/{sample}.nprograms-{nprograms}.nb_cells.pdf",
+    conda:
+        "envs/rcppml.yml"
+    threads: 1
+    script:
+        "scripts/plot_nb_cells.R"
+
+rule hallmark_enrichment:
+    input:
+        contrib_txt = OUT_PIPELINE + "/{sample}/programs_{nprograms}/contributions/{sample}.nprograms-{nprograms}.contributions_genes.txt"
+    output:
+        csv = OUT_PIPELINE + "/{sample}/programs_{nprograms}/hallmarks/enrichment/{sample}.nprograms-{nprograms}.hallmark_enrichment.csv"
+    conda:
+        "envs/rcppml.yml"
+    threads: 1
+    script:
+        "scripts/generate_hallmarks.R"
+
+
+rule plot_hallmarks_heatmap:
+    input:
+        csv_enrich =  OUT_PIPELINE + "/{sample}/programs_{nprograms}/hallmarks/enrichment/{sample}.nprograms-{nprograms}.hallmark_enrichment.csv"
+    output:
+        pdf_heatmap_enrich = OUT_PIPELINE + "/{sample}/programs_{nprograms}/hallmarks/enrichment/{sample}.nprograms-{nprograms}.hallmarks_enrichment_heatmap.pdf",
+    conda:
+        "envs/rcppml.yml"
+    threads: 1
+    script:
+        "scripts/plot_hallmarks_heatmap.R"
+
+
+rule programs_markers_NMF:
+    input:
+        contrib_tsv = OUT_PIPELINE + "/{sample}/programs_{nprograms}/contributions/{sample}.nprograms-{nprograms}.contributions_genes.txt"
+    output:
+        tsv = OUT_PIPELINE + "/{sample}/programs_{nprograms}/markers/manualy/{sample}.nprograms-{nprograms}.markers_manualy.csv"
+    conda:
+        "envs/rcppml.yml"
+    threads: 1
+    script:
+        "scripts/programs_markers_manualy.R"
+
+rule programs_markers_seurat:
+    input:
+        seurat_rds = DATA_DIR + "/{sample}/{sample}.seurat-object.rds",
+        contrib_tsv = OUT_PIPELINE + "/{sample}/programs_{nprograms}/contributions/{sample}.nprograms-{nprograms}.contributions_cells.txt"
+    output:
+        xlsx = OUT_PIPELINE + "/{sample}/programs_{nprograms}/markers/seurat/{sample}.nprograms-{nprograms}.markers_seurat.xlsx"
+    conda:
+        "envs/rcppml.yml"
+    threads: 1
+    script:
+        "scripts/programs_markers_seurat.R"
+        
+# rule go_enrichment:
+#     input:
+#         tsv = OUT_PIPELINE + "/{sample}/programs_{nprograms}/{sample}_top_genes_enrichment_k{nprograms}.csv"
+#     output:
+#         pdf = OUT_PIPELINE + "/{sample}/programs_{nprograms}/{sample}_GO_enrichment_k{nprograms}.pdf"
+#     log:
+#         "logs/{sample}/NMF_k{nprograms}_GO_enrichment.log"
+#     threads: 1
+#     conda:
+#         "envs/rcppml.yml"
+#     script:
+#         "scripts/go_enrichment.R"

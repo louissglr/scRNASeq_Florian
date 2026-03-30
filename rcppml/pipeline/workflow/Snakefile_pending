@@ -1,0 +1,104 @@
+configfile: "../config/config-glicid-scratch.yml"
+
+SAMPLES        = config["samples"]
+NPROGRAMS      = config["nProgramsRange"]
+RCPPML_BASE    = config["rcppmlOutDir"]
+OUT_PIPELINE   = config["pipelineOutDir"]
+DATA_DIR       = config["dataDir"]
+
+rule all:
+    input:
+        expand(
+            OUT_PIPELINE + "/{sample}/programs_{nprograms}/{sample}.nprograms-{nprograms}.UMAP.pdf",
+            sample=SAMPLES,
+            nprograms=NPROGRAMS
+        ),
+        expand(
+            OUT_PIPELINE + "/{sample}/programs_{nprograms}/{sample}_nmf_contributions_k{nprograms}.tsv",
+            sample=SAMPLES,
+            nprograms=NPROGRAMS
+        ),
+        expand(
+            OUT_PIPELINE + "/{sample}/programs_{nprograms}/{sample}_top_genes_enrichment_k{nprograms}.csv",
+            sample=SAMPLES,
+            nprograms=NPROGRAMS
+        ),
+        expand(
+            OUT_PIPELINE + "/{sample}/programs_{nprograms}/{sample}_hallmark_enrichment_k{nprograms}.csv",
+            sample=SAMPLES,
+            nprograms=NPROGRAMS
+        ),
+        expand(
+            OUT_PIPELINE + "/{sample}/programs_{nprograms}/{sample}_hallmark_enrichment_k{nprograms}.pdf",
+            sample=SAMPLES,
+            nprograms=NPROGRAMS
+        )
+
+rule extract_rcppml_contrib:
+    input:
+        seurat_rds = DATA_DIR + "/seurat_obj.rds",
+        rcppml_rds = RCPPML_BASE + "/{sample}/NMF_k{nprograms}/NMF_model_k{nprograms}.rds"
+    output:
+        tsv = OUT_PIPELINE + "/{sample}/programs_{nprograms}/{sample}_nmf_contributions_k{nprograms}.tsv"
+    log:
+        "logs/{sample}/NMF_k{nprograms}_extract.log"
+    threads: 1
+    conda:
+        "envs/rcppml.yml"
+    script:
+        "scripts/extract_rcppml_contributions.R"
+
+rule umap_patterns:
+    input:
+        tsv = OUT_PIPELINE + "/{sample}/programs_{nprograms}/{sample}_nmf_contributions_k{nprograms}.tsv",
+        seurat_rds = DATA_DIR + "/seurat_obj.rds"
+    output:
+        pdf = OUT_PIPELINE + "/{sample}/programs_{nprograms}/{sample}.nprograms-{nprograms}.UMAP.pdf"
+    log:
+        "logs/{sample}/NMF_k{nprograms}_umap.log"
+    threads: 1
+    conda:
+        "envs/rcppml.yml"
+    script:
+        "scripts/umap_from_contrib.R"
+
+rule extract_top_genes:
+    input:
+        seurat_rds = DATA_DIR + "/seurat_obj.rds",
+        rcppml_rds = RCPPML_BASE + "/{sample}/NMF_k{nprograms}/NMF_model_k{nprograms}.rds"
+    output:
+        tsv = OUT_PIPELINE + "/{sample}/programs_{nprograms}/{sample}_top_genes_enrichment_k{nprograms}.csv"
+    log:
+        "logs/{sample}/NMF_k{nprograms}_top_genes.log"
+    threads: 1
+    conda:
+        "envs/rcppml.yml"
+    script:
+        "scripts/extract_top_genes.R"
+
+rule hallmark_enrichment:
+    input:
+        seurat_rds = DATA_DIR + "/seurat_obj.rds",
+        rcppml_rds = RCPPML_BASE + "/{sample}/NMF_k{nprograms}/NMF_model_k{nprograms}.rds"
+    output:
+        csv = OUT_PIPELINE + "/{sample}/programs_{nprograms}/{sample}_hallmark_enrichment_k{nprograms}.csv"
+    log:
+        "logs/{sample}/NMF_k{nprograms}_hallmark_enrichment.log"
+    threads: 1
+    conda:
+        "envs/rcppml.yml"
+    script:
+        "scripts/hallmark_enrichment.R"
+
+rule plot_hallmark_enrichment:
+    input:
+        csv = OUT_PIPELINE + "/{sample}/programs_{nprograms}/{sample}_hallmark_enrichment_k{nprograms}.csv"
+    output:
+        pdf = OUT_PIPELINE + "/{sample}/programs_{nprograms}/{sample}_hallmark_enrichment_k{nprograms}.pdf"
+    log:
+        "logs/{sample}/NMF_k{nprograms}_hallmark_plot.log"
+    threads: 1
+    conda:
+        "envs/rcppml.yml"
+    script:
+        "scripts/plot_hallmark_enrichment.R"
