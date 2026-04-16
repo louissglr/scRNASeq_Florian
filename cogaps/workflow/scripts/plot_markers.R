@@ -67,6 +67,6 @@ p <- DotPlot(seurat,
     axis.text.x = element_markdown(angle = 45, hjust = 1, size = 10, face = "bold")
   )
 
-png(output_png, width = 10, height = 8)
+png(output_png , width = 10, height = 8, units = "in", res = 300)
 print(p)
 dev.off()

@@ -80,6 +80,6 @@ p <- DotPlot(seurat,
   )
 
 # Save png
-png(output_png, width = 10, height = 8)
+png(output_png, width = 10, height = 8, units = "in", res = 300)
 print(p)
 dev.off()
