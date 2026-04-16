@@ -9,7 +9,7 @@ suppressPackageStartupMessages({
 
 contrib_file <- snakemake@input[["contrib"]] 
 metadata_file <- snakemake@input[["metadata"]]
-output_pdf  <- snakemake@output[["pdf"]]
+output_png  <- snakemake@output[["png"]]
 sample_name <- snakemake@wildcards[["sample"]]
 
 contrib <- read.table(contrib_file, header = TRUE)
@@ -78,7 +78,7 @@ p <- ggplot(df_prop, aes(x = group, y = prop, fill = dominant_pattern)) +
     legend.position = "right"
   )
 
-pdf(output_pdf, width = 10, height = 8)
+png(output_png, width = 10, height = 8, units = "in", res = 300)
 print(p)
 dev.off()
 

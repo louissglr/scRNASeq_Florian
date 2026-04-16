@@ -8,7 +8,7 @@ suppressPackageStartupMessages({
 
 umap_file    <- snakemake@input[["umap"]]
 metadata_file <- snakemake@input[["metadata"]]
-output_pdf   <- snakemake@output[["pdf"]]
+output_png   <- snakemake@output[["png"]]
 sample_name  <- snakemake@wildcards[["sample"]]
 dataset      <- snakemake@params[["dataset"]]
 
@@ -68,6 +68,6 @@ p <- ggplot(plot_df, aes(x = UMAP_1, y = UMAP_2, color = group)) +
        color = "Group") +
   theme(plot.title = element_text(hjust = 0.5), legend.position = "right")
 
-pdf(output_pdf, width = 10, height = 8)
+png(output_png, width = 10, height = 8, units = "in", res = 300)
 print(p)
 dev.off()

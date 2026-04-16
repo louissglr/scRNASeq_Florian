@@ -10,8 +10,8 @@ library(grid)  # pour gpar
 input_csv_enrichment  <- snakemake@input[["csv_enrich"]]
 input_csv_overrep     <- snakemake@input[["csv_overr"]]
 
-output_pdf_enrich     <- snakemake@output[["pdf_heatmap_enrich"]]
-output_pdf_overrep    <- snakemake@output[["pdf_heatmap_overr"]]
+output_png_enrich     <- snakemake@output[["png_heatmap_enrich"]]
+output_png_overrep    <- snakemake@output[["png_heatmap_overr"]]
 
 sample_name <- snakemake@wildcards[["sample"]]
 n_patterns  <- as.integer(snakemake@wildcards[["npatterns"]])
@@ -20,7 +20,7 @@ n_patterns  <- as.integer(snakemake@wildcards[["npatterns"]])
 max_color_val <- 50
 sig_threshold <- -10*log10(0.05)
 
-generate_heatmap <- function(input_csv, output_pdf, title_suffix) {
+generate_heatmap <- function(input_csv, output_png, title_suffix) {
   
   # Lecture et nettoyage des noms de hallmarks
   hallmarks_df <- read.csv(input_csv, stringsAsFactors = FALSE) %>%
@@ -84,8 +84,8 @@ generate_heatmap <- function(input_csv, output_pdf, title_suffix) {
     )
   )
   
-  # Sauvegarde au format PDF
-  pdf(output_pdf, width = 8, height = 10)
+  # Sauvegarde au format png
+  png(output_png, width = 10, height = 8, units = "in", res = 300)
   draw(ht)
   dev.off()
 }
@@ -93,13 +93,13 @@ generate_heatmap <- function(input_csv, output_pdf, title_suffix) {
 # Génération heatmap enrichment
 generate_heatmap(
   input_csv_enrichment,
-  output_pdf_enrich,
+  output_png_enrich,
   "enrichment"
 )
 
 # Génération heatmap overrepresentation
 generate_heatmap(
   input_csv_overrep,
-  output_pdf_overrep,
+  output_png_overrep,
   "overrepresentation"
 )

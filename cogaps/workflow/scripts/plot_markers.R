@@ -11,7 +11,7 @@ library(ggtext)
 contrib_file <- snakemake@input[["contrib"]]
 seurat_file <- snakemake@input[["tumor_rna_seuratobj"]]
 markers_file <- snakemake@input[["markers_excel"]]
-output_pdf  <- snakemake@output[["pdf"]]
+output_png  <- snakemake@output[["png"]]
 
 contrib <- read.table(contrib_file, header = TRUE)
 seurat <- readRDS(seurat_file)
@@ -67,6 +67,6 @@ p <- DotPlot(seurat,
     axis.text.x = element_markdown(angle = 45, hjust = 1, size = 10, face = "bold")
   )
 
-pdf(output_pdf, width = 10, height = 8)
+png(output_png, width = 10, height = 8)
 print(p)
 dev.off()

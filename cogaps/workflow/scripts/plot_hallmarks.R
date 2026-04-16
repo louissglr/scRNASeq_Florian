@@ -1,9 +1,9 @@
 library(ggplot2)
 
 input_csv_enrichment  <- snakemake@input[["csv_enrich"]]
-output_pdf_enrichment <- snakemake@output[["pdf_enrich"]]
+output_png_enrichment <- snakemake@output[["png_enrich"]]
 input_csv_overrep  <- snakemake@input[["csv_overr"]]
-output_pdf_overrep <- snakemake@output[["pdf_overr"]]
+output_png_overrep <- snakemake@output[["png_overr"]]
 
 
 
@@ -43,12 +43,12 @@ pattern_plot_list <- lapply(pattern_df_list, function(df) {
     )
 })
 
-pdf(output_pdf_enrichment, width = 11, height = 8)
+png(output_png_enrichment, width = 11, height = 8)
 for (p in pattern_plot_list) {
   print(p)
 }
 dev.off()
-message("PDF généré : ", output_pdf_enrichment)
+message("png généré : ", output_png_enrichment)
 
 # ============================
 # Overrepresentation
@@ -83,10 +83,10 @@ pattern_plot_list <- lapply(pattern_df_list, function(df) {
     )
 })
 
-pdf(output_pdf_overrep, width = 11, height = 8)
+png(output_png, width = 10, height = 8, units = "in", res = 300)
 for (p in pattern_plot_list) {
   print(p)
 }
 dev.off()
-message("PDF généré : ", output_pdf_overrep)
+message("png généré : ", output_png_overrep)
 

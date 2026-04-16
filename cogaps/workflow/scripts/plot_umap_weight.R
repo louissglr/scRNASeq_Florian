@@ -14,12 +14,12 @@ suppressPackageStartupMessages({
 
 contrib_file <- snakemake@input[["contributions"]]
 umap_file    <- snakemake@input[["umap"]]
-output_pdf   <- snakemake@output[["pdf"]]
+output_png   <- snakemake@output[["png"]]
 sample_name  <- snakemake@wildcards[["sample"]]
 dataset      <- snakemake@params[["dataset"]]
 
-if (!dir.exists(dirname(output_pdf)))
-  dir.create(dirname(output_pdf), recursive = TRUE)
+if (!dir.exists(dirname(output_png)))
+  dir.create(dirname(output_png), recursive = TRUE)
 
 contrib_df <- read_tsv(contrib_file, guess_max = 1e6)
 
@@ -148,8 +148,8 @@ p_weights <- add_axes_arrows(p_weights,
                              "UMAP1",
                              "UMAP2")
 
-pdf(output_pdf, width = 14, height = 10)
+png(output_png, width = 10, height = 8, units = "in", res = 300)
 print(p_weights)
 dev.off()
 
-message("Finished: ", output_pdf)
+message("Finished: ", output_png)
