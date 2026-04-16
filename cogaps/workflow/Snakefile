@@ -57,6 +57,15 @@ rule all:
 
         expand(
             [
+                config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/c8/get_function/enrichment/{sample}.npatterns-{npatterns}.c8_enrichment.csv",
+                config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/c8/get_function/overrep/{sample}.npatterns-{npatterns}.c8_overrepresentation.csv",
+            ],
+	        sample=SAMPLES,
+            npatterns=NPATTERNS
+        ),
+
+        expand(
+            [
                 config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/hallmarks/manually/enrichment/{sample}.npatterns-{npatterns}.hallmarks_enrichment.csv",
                 config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/hallmarks/manually/overrep/{sample}.npatterns-{npatterns}.hallmarks_overrepresentation.csv",
             ],
@@ -116,6 +125,17 @@ rule all:
 
         expand(
             config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/c2/get_function/overrep/{sample}.npatterns-{npatterns}.c2_overrepresentation_heatmap.pdf",
+            sample=SAMPLES,
+            npatterns=NPATTERNS
+        ),
+        expand(
+            config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/c8/get_function/enrichment/{sample}.npatterns-{npatterns}.c8_enrichment_heatmap.pdf",
+            sample=SAMPLES,
+            npatterns=NPATTERNS
+        ),
+
+        expand(
+            config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/c8/get_function/overrep/{sample}.npatterns-{npatterns}.c8_overrepresentation_heatmap.pdf",
             sample=SAMPLES,
             npatterns=NPATTERNS
         ),
@@ -334,6 +354,18 @@ rule generate_curated_gs:
     script:
         "scripts/generate_curated_gs.R"
 
+rule generate_c8:
+    input:
+        cogaps_rds=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/object/{sample}.npatterns-{npatterns}.cogaps-object.Rds"
+    output:
+        csv_enrich=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/c8/get_function/enrichment/{sample}.npatterns-{npatterns}.c8_enrichment.csv",
+        csv_overr=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/c8/get_function/overrep/{sample}.npatterns-{npatterns}.c8_overrepresentation.csv",
+    conda:
+        "envs/cogaps.yml"    
+    threads: 1
+    script:
+        "scripts/generate_c8.R"        
+
 rule generate_hallmarks_manually:
     input:
         contrib_txt=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/contributions/{sample}.npatterns-{npatterns}.contributions_genes.txt",
@@ -462,6 +494,19 @@ rule plot_c2_heatmap:
     threads: 1
     script:
         "scripts/plot_c2_heatmap.R"
+
+rule plot_c8_heatmap:
+    input:
+        csv_enrich = config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/c8/get_function/enrichment/{sample}.npatterns-{npatterns}.c8_enrichment.csv",
+        csv_overr  = config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/c8/get_function/overrep/{sample}.npatterns-{npatterns}.c8_overrepresentation.csv"
+    output:
+        pdf_heatmap_enrich = config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/c8/get_function/enrichment/{sample}.npatterns-{npatterns}.c8_enrichment_heatmap.pdf",
+        pdf_heatmap_overr  = config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/c8/get_function/overrep/{sample}.npatterns-{npatterns}.c8_overrepresentation_heatmap.pdf"
+    conda:
+        "envs/cogaps.yml"
+    threads: 1
+    script:
+        "scripts/plot_c8_heatmap.R"
 
 rule plot_hallmarks_heatmap_manually:
     input:
