@@ -639,11 +639,9 @@ rule render_report:
     output:
         html=report(
             config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/report/{sample}.npatterns-{npatterns}.report.html",
-            category="Results",
-            labels={
-            "sample": "{sample}",
-            "patterns": "{npatterns}"   
-        }
+            category="{sample}",            # ← un onglet par sample
+            subcategory="CoGAPS Report",
+            labels={"patterns": "{npatterns}"}
         )
 
     params:
