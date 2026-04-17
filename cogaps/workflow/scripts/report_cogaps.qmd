@@ -1,0 +1,283 @@
+---
+title: "CoGAPS Report | `r params$sample` | `r params$npatterns` patterns"
+format:
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 3
+    code-fold: true
+    code-tools: true
+    highlight-style: github
+    embed-resources: true
+    anchor-sections: true
+    smooth-scroll: true
+lightbox: true
+execute:
+  cache: false
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: '#>'
+params:
+  sample: "SAMPLE"
+  npatterns: 0
+  outdir: ""
+  contrib_cells: ""
+  contrib_genes: ""
+  markers_excel: ""
+  enrich_csv: ""
+  overr_csv: ""
+  kw_csv: ""
+  pairwise_csv: ""
+  dotplot: ""
+  png_specificity_patterns: ""
+  png_specificity_metagroups: ""
+  png_enrich_unique: ""
+  png_overr_unique: ""
+  png_enrich_heatmap: ""
+  png_overr_heatmap: ""
+  png_enrich_heatmap_manually: ""
+  png_overr_heatmap_manually: ""
+  umap_nmf: ""
+  umap_nb_cells: ""
+  weight_nmf: ""
+  benchmark_tsv: ""
+---
+
+```{r setup, include=FALSE}
+suppressPackageStartupMessages({
+    library(readxl)
+    library(readr)
+    library(dplyr)
+    library(knitr)
+    library(kableExtra)
+})
+s <- params$sample
+n <- params$npatterns
+```
+
+## Overview
+
+```{r tbl-params}
+n_learned <- NA
+n_cells <- NA
+
+if (file.exists(params$contrib_cells) && params$contrib_cells != "") {
+  contrib <- read_tsv(params$contrib_cells, show_col_types = FALSE)
+  n_learned <- sum(grepl("^Pattern", colnames(contrib)))
+  n_cells <- nrow(contrib)
+}
+
+data.frame(
+    Parameter = c(
+      "Sample",
+      "Number of targeted patterns",
+      "Number of learned patterns",
+      "Number of cells"
+    ),
+    Value = c(
+      s,
+      as.character(n),
+      as.character(n_learned),
+      as.character(n_cells)
+    )
+) |>
+  kable(caption = "Sample information") |>
+  kable_styling(full_width = FALSE)
+```
+
+```{r tbl-benchmark}
+if (file.exists(params$benchmark_tsv) && params$benchmark_tsv != "") {
+
+  read_tsv(params$benchmark_tsv, show_col_types = FALSE) |>
+    kable(digits = 2, caption = "CoGAPS benchmark") |>
+    kable_styling(bootstrap_options = c("striped", "hover"))
+
+}
+```
+
+## Contributions
+
+::: {.panel-tabset}
+
+### Cells
+
+```{r tbl-contrib-cells}
+read_tsv(params$contrib_cells, show_col_types = FALSE) |>
+    head(50) |>
+    kable(caption = "P matrix (sampleFactors)") |>
+    kable_styling(bootstrap_options = c("striped", "hover")) |>
+    scroll_box(height = "400px")
+
+knitr::asis_output("<p style='margin-top: 8px;'><em>Note:</em> Only the first 50 rows are shown.</p>")
+```
+
+### Genes
+
+```{r tbl-contrib-genes}
+read_tsv(params$contrib_genes, show_col_types = FALSE) |>
+    head(50) |>
+    kable(caption = "A matrix (featureLoadings)") |>
+    kable_styling(bootstrap_options = c("striped", "hover")) |>
+    scroll_box(height = "400px")
+
+knitr::asis_output("<p style='margin-top: 8px;'><em>Note:</em> Only the first 50 rows are shown.</p>")
+```
+
+:::
+
+## UMAP — Pattern weight
+
+```{r fig-weight-nmf}
+#| out-width: 100%
+include_graphics(params$weight_nmf)
+```
+
+## UMAP — Dominant pattern
+
+::: {.panel-tabset}
+
+### NMF
+
+```{r fig-umap-nmf}
+#| out-width: 100%
+include_graphics(params$umap_nmf)
+```
+
+### Cell counts
+
+```{r fig-nb-cells}
+#| out-width: 100%
+include_graphics(params$umap_nb_cells)
+```
+
+:::
+
+## Pattern specificity
+
+::: {.panel-tabset}
+
+### By pattern
+
+```{r fig-specificity-patterns}
+#| fig-cap: "Pattern specificity"
+#| out-width: 100%
+include_graphics(params$png_specificity_patterns)
+```
+
+### By metagroup
+
+```{r fig-specificity-metagroups}
+#| fig-cap: "Metagroup specificity"
+#| out-width: 100%
+include_graphics(params$png_specificity_metagroups)
+```
+
+:::
+
+## Statistics
+
+::: {.panel-tabset}
+
+### Kruskal-Wallis
+
+```{r tbl-kw}
+read_csv(params$kw_csv, show_col_types = FALSE) |>
+    kable() |> kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+### Pairwise comparisons
+
+```{r tbl-pairwise}
+read_csv(params$pairwise_csv, show_col_types = FALSE) |>
+    kable() |>
+    kable_styling(bootstrap_options = c("striped", "hover")) |>
+    scroll_box(height = "400px")
+```
+
+:::
+
+## Markers
+
+::: {.panel-tabset}
+
+### Dotplot
+
+```{r fig-dotplot}
+#| fig-cap: "Marker genes dotplot by fixing dominant pattern"
+#| out-width: 100%
+include_graphics(params$dotplot)
+```
+
+:::
+
+## Hallmarks
+
+::: {.panel-tabset}
+
+### Enrichment — heatmap (get_function)
+
+```{r fig-enrich-heatmap}
+#| fig-cap: "Hallmarks enrichment heatmap"
+#| out-width: 100%
+include_graphics(params$png_enrich_heatmap)
+```
+
+### Enrichment — heatmap (manually)
+
+```{r fig-enrich-heatmap-manually}
+#| fig-cap: "Hallmarks enrichment heatmap (manually)"
+#| out-width: 100%
+include_graphics(params$png_enrich_heatmap_manually)
+```
+
+### Enrichment — unique
+
+```{r fig-enrich-unique}
+#| fig-cap: "Hallmarks enrichment (unique)"
+#| out-width: 100%
+include_graphics(params$png_enrich_unique)
+```
+
+### Overrepresentation — heatmap (get_function)
+
+```{r fig-overr-heatmap}
+#| fig-cap: "Hallmarks overrepresentation heatmap"
+#| out-width: 100%
+include_graphics(params$png_overr_heatmap)
+```
+
+### Overrepresentation — heatmap (manually)
+
+```{r fig-overr-heatmap-manually}
+#| fig-cap: "Hallmarks overrepresentation heatmap (manually)"
+#| out-width: 100%
+include_graphics(params$png_overr_heatmap_manually)
+```
+
+### Overrepresentation — unique
+
+```{r fig-overr-unique}
+#| fig-cap: "Hallmarks overrepresentation (unique)"
+#| out-width: 100%
+include_graphics(params$png_overr_unique)
+```
+
+### Tables
+
+```{r tbl-enrich}
+read_csv(params$enrich_csv, show_col_types = FALSE) |>
+    select(-leadingEdge) |>
+    kable(caption = "Hallmarks enrichment") |>
+    kable_styling(bootstrap_options = c("striped", "hover")) |>
+    scroll_box(height = "350px")
+```
+
+```{r tbl-overr}
+read_csv(params$overr_csv, show_col_types = FALSE) |>
+    kable(caption = "Hallmarks overrepresentation") |>
+    kable_styling(bootstrap_options = c("striped", "hover")) |>
+    scroll_box(height = "350px")
+```
+
+:::

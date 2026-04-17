@@ -13,7 +13,7 @@ contrib_file <- snakemake@input[["contrib"]]
 seurat_file <- snakemake@input[["tumor_rna_seuratobj"]]
 signature_file <- snakemake@input[["signature"]]
 coo_file <- snakemake@input[["coo"]]
-pdf_file <- snakemake@output[["pdf"]]
+png_file <- snakemake@output[["png"]]
 sample_name <- snakemake@wildcards[["sample"]]
 
 contrib <- read.table(contrib_file, header = TRUE, sep = "\t", stringsAsFactors = FALSE, fileEncoding = "UTF-8")
@@ -73,6 +73,6 @@ p_violin <- ggplot(df_plot, aes(x = as.factor(dominant_pattern), y = score, fill
   ) +
   theme(legend.position = "none")
 
-pdf(pdf_file, width = 12, height = 6)
+  png(png_file, width = 10, height = 8, units = "in", res = 300)
 p_umap + p_violin
 dev.off()

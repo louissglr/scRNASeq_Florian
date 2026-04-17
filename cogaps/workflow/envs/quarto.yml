@@ -1,0 +1,14 @@
+name: quarto
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - r-base >=4.3
+  - quarto
+  - r-rmarkdown
+  - r-knitr
+  - r-readxl
+  - r-readr
+  - r-dplyr
+  - r-kableextra
