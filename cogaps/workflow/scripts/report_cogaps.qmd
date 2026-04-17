@@ -36,8 +36,6 @@ params:
   png_overr_unique: ""
   png_enrich_heatmap: ""
   png_overr_heatmap: ""
-  png_enrich_heatmap_manually: ""
-  png_overr_heatmap_manually: ""
   umap_nmf: ""
   umap_nb_cells: ""
   weight_nmf: ""
@@ -215,7 +213,11 @@ include_graphics(params$dotplot)
 
 ::: {.panel-tabset}
 
-### Enrichment — heatmap (get_function)
+### Enrichment
+
+::: {.panel-tabset}
+
+#### Heatmap (get_function)
 
 ```{r fig-enrich-heatmap}
 #| fig-cap: "Hallmarks enrichment heatmap"
@@ -223,15 +225,7 @@ include_graphics(params$dotplot)
 include_graphics(params$png_enrich_heatmap)
 ```
 
-### Enrichment — heatmap (manually)
-
-```{r fig-enrich-heatmap-manually}
-#| fig-cap: "Hallmarks enrichment heatmap (manually)"
-#| out-width: 100%
-include_graphics(params$png_enrich_heatmap_manually)
-```
-
-### Enrichment — unique
+#### Unique
 
 ```{r fig-enrich-unique}
 #| fig-cap: "Hallmarks enrichment (unique)"
@@ -239,31 +233,7 @@ include_graphics(params$png_enrich_heatmap_manually)
 include_graphics(params$png_enrich_unique)
 ```
 
-### Overrepresentation — heatmap (get_function)
-
-```{r fig-overr-heatmap}
-#| fig-cap: "Hallmarks overrepresentation heatmap"
-#| out-width: 100%
-include_graphics(params$png_overr_heatmap)
-```
-
-### Overrepresentation — heatmap (manually)
-
-```{r fig-overr-heatmap-manually}
-#| fig-cap: "Hallmarks overrepresentation heatmap (manually)"
-#| out-width: 100%
-include_graphics(params$png_overr_heatmap_manually)
-```
-
-### Overrepresentation — unique
-
-```{r fig-overr-unique}
-#| fig-cap: "Hallmarks overrepresentation (unique)"
-#| out-width: 100%
-include_graphics(params$png_overr_unique)
-```
-
-### Tables
+#### Table
 
 ```{r tbl-enrich}
 read_csv(params$enrich_csv, show_col_types = FALSE) |>
@@ -273,11 +243,37 @@ read_csv(params$enrich_csv, show_col_types = FALSE) |>
     scroll_box(height = "350px")
 ```
 
+:::
+
+### Overrepresentation
+
+::: {.panel-tabset}
+
+#### Heatmap (get_function)
+
+```{r fig-overr-heatmap}
+#| fig-cap: "Hallmarks overrepresentation heatmap"
+#| out-width: 100%
+include_graphics(params$png_overr_heatmap)
+```
+
+#### Unique
+
+```{r fig-overr-unique}
+#| fig-cap: "Hallmarks overrepresentation (unique)"
+#| out-width: 100%
+include_graphics(params$png_overr_unique)
+```
+
+#### Table
+
 ```{r tbl-overr}
 read_csv(params$overr_csv, show_col_types = FALSE) |>
     kable(caption = "Hallmarks overrepresentation") |>
     kable_styling(bootstrap_options = c("striped", "hover")) |>
     scroll_box(height = "350px")
 ```
+
+:::
 
 :::

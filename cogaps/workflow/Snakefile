@@ -625,9 +625,6 @@ rule render_report:
         png_enrich_heatmap=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/hallmarks/get_function/enrichment/{sample}.npatterns-{npatterns}.hallmarks_enrichment_heatmap.png",
         png_overr_heatmap=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/hallmarks/get_function/overrep/{sample}.npatterns-{npatterns}.hallmarks_overrepresentation_heatmap.png",
 
-        png_enrich_heatmap_manually=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/hallmarks/manually/enrichment/{sample}.npatterns-{npatterns}.hallmarks_enrichment_heatmap.png",
-        png_overr_heatmap_manually=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/hallmarks/manually/overrep/{sample}.npatterns-{npatterns}.hallmarks_overrepresentation_heatmap.png",
-
         umap_nmf=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/umap/dominant/{sample}.npatterns-{npatterns}.UMAP_dominant_nmf.png",
 
         umap_nb_cells=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/umap/dominant/infos/{sample}.npatterns-{npatterns}.nb_cells.png",
@@ -639,7 +636,7 @@ rule render_report:
     output:
         html=report(
             config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/report/{sample}.npatterns-{npatterns}.report.html",
-            category="{sample}",            # ← un onglet par sample
+            category="{sample}",           
             subcategory="CoGAPS Report",
             labels={"patterns": "{npatterns}"}
         )
@@ -689,8 +686,6 @@ rule render_report:
             -P png_overr_unique:"{input.png_overr_unique}" \
             -P png_enrich_heatmap:"{input.png_enrich_heatmap}" \
             -P png_overr_heatmap:"{input.png_overr_heatmap}" \
-            -P png_enrich_heatmap_manually:"{input.png_enrich_heatmap_manually}" \
-            -P png_overr_heatmap_manually:"{input.png_overr_heatmap_manually}" \
             -P umap_nmf:"{input.umap_nmf}" \
             -P umap_nb_cells:"{input.umap_nb_cells}" \
             -P weight_nmf:"{input.weight_nmf}" \
