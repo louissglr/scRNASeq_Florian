@@ -204,6 +204,18 @@ rule all:
             npatterns=NPATTERNS,
         ),
         expand(
+            config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/umap/clusters/{sample}.npatterns-{npatterns}.nmf_clusters.tsv",
+            sample=SAMPLES,
+            npatterns=NPATTERNS,
+        ),
+
+        expand(
+            config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/heatmap/{sample}.npatterns-{npatterns}.pattern_nmf_cluster_heatmap.png",
+            sample=SAMPLES,
+            npatterns=NPATTERNS,
+        ),
+
+        expand(
             config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/umap/dominant/{sample}.npatterns-{npatterns}.UMAP_meta_{dataset}.png",
             sample=SAMPLES,
             npatterns=NPATTERNS,
@@ -619,6 +631,28 @@ rule pattern_group_heatmap:
     script:
         "scripts/plot_pattern_group_heatmap.R"
 
+rule nmf_seurat_clustering:
+    input:
+        contrib = config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/contributions/{sample}.npatterns-{npatterns}.contributions_cells.txt"
+    output:
+        clusters = config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/umap/clusters/{sample}.npatterns-{npatterns}.nmf_clusters.tsv"
+    conda:
+        "envs/cogaps.yml"
+    threads: 4
+    script:
+        "scripts/nmf_seurat_clustering.R"
+
+rule pattern_nmf_clusters_heatmap:
+    input:
+        contrib = config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/contributions/{sample}.npatterns-{npatterns}.contributions_cells.txt",
+        clusters = config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/umap/clusters/{sample}.npatterns-{npatterns}.nmf_clusters.tsv"
+    output:
+        png = config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/heatmap/{sample}.npatterns-{npatterns}.pattern_nmf_cluster_heatmap.png"
+    conda:
+        "envs/cogaps.yml"
+    threads: 1
+    script:
+        "scripts/plot_pattern_clusterNMF_heatmap.R"
 
 rule render_report:
     input:
@@ -653,7 +687,8 @@ rule render_report:
 
         benchmark_tsv="/scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/cogaps/workflow/benchmarks/{sample}/{sample}-{npatterns}.tsv",
 
-        heatmap_score_pg=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/heatmap/{sample}.npatterns-{npatterns}.pattern_condition_heatmap.png"
+        heatmap_score_pg=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/heatmap/{sample}.npatterns-{npatterns}.pattern_condition_heatmap.png",
+        heatmap_score_pc_nmf=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/heatmap/{sample}.npatterns-{npatterns}.pattern_nmf_cluster_heatmap.png"
 
     output:
         html=report(
@@ -715,6 +750,7 @@ rule render_report:
             -P weight_nmf:"{input.weight_nmf}" \
             -P benchmark_tsv:"{input.benchmark_tsv}" \
             -P heatmap_score_pg:"{input.heatmap_score_pg}" \
+            -P heatmap_score_pc_nmf:"{input.heatmap_score_pc_nmf}" \
             > "$LOGFILE" 2>&1
         """
  

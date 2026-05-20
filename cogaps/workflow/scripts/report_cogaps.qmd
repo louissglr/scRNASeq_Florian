@@ -43,6 +43,7 @@ params:
   weight_nmf: ""
   benchmark_tsv: ""
   heatmap_score_pg: ""
+  heatmap_score_pc_nmf: ""
 ---
 
 ```{r setup, include=FALSE}
@@ -145,7 +146,11 @@ include_graphics(params$weight_nmf)
 #| out-width: 100%
 include_graphics(params$heatmap_score_pg)
 ```
-
+```{r fig-heatmap_score2}
+#| fig-cap: "Heatmap of mean pattern activity across NMF clusters"
+#| out-width: 100%
+include_graphics(params$heatmap_score_pc_nmf)
+```
 
 ## UMAP — Dominant pattern
 
