@@ -199,6 +199,11 @@ rule all:
         ),
 
         expand(
+            config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/heatmap/{sample}.npatterns-{npatterns}.pattern_condition_heatmap.png",
+            sample=SAMPLES,
+            npatterns=NPATTERNS,
+        ),
+        expand(
             config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/umap/dominant/{sample}.npatterns-{npatterns}.UMAP_meta_{dataset}.png",
             sample=SAMPLES,
             npatterns=NPATTERNS,
@@ -602,6 +607,19 @@ rule recap_patterns_global:
         "scripts/recap_patterns_global.R"
 
 
+rule pattern_group_heatmap:
+    input:
+        contrib = config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/contributions/{sample}.npatterns-{npatterns}.contributions_cells.txt",
+        metadata = config["metadataDir"] + "/meta_subset.tsv"
+    output:
+        png = config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/heatmap/{sample}.npatterns-{npatterns}.pattern_condition_heatmap.png"
+    conda:
+        "envs/cogaps.yml"
+    threads: 1
+    script:
+        "scripts/plot_pattern_group_heatmap.R"
+
+
 rule render_report:
     input:
         qmd=reportqmd,
@@ -631,7 +649,9 @@ rule render_report:
 
         weight_nmf=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/umap/weight/{sample}.npatterns-{npatterns}.UMAP_weight_nmf.png",
 
-        benchmark_tsv="benchmarks/{sample}/{sample}-{npatterns}.tsv"
+        benchmark_tsv="/scratch/nautilus/users/sanglier-l@univ-nantes.fr/scRNASeq_Florian/cogaps/workflow/benchmarks/{sample}/{sample}-{npatterns}.tsv",
+
+        heatmap_score_pg=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/heatmap/{sample}.npatterns-{npatterns}.pattern_condition_heatmap.png"
 
     output:
         html=report(
@@ -690,6 +710,7 @@ rule render_report:
             -P umap_nb_cells:"{input.umap_nb_cells}" \
             -P weight_nmf:"{input.weight_nmf}" \
             -P benchmark_tsv:"{input.benchmark_tsv}" \
+            -P heatmap_score_pg:"{input.heatmap_score_pg}" \
             > "$LOGFILE" 2>&1
         """
  

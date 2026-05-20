@@ -40,6 +40,7 @@ params:
   umap_nb_cells: ""
   weight_nmf: ""
   benchmark_tsv: ""
+  heatmap_score_pg: ""
 ---
 
 ```{r setup, include=FALSE}
@@ -99,7 +100,6 @@ if (file.exists(params$benchmark_tsv) && params$benchmark_tsv != "") {
 ::: {.panel-tabset}
 
 ### Cells
-
 ```{r tbl-contrib-cells}
 read_tsv(params$contrib_cells, show_col_types = FALSE) |>
     head(50) |>
@@ -107,7 +107,10 @@ read_tsv(params$contrib_cells, show_col_types = FALSE) |>
     kable_styling(bootstrap_options = c("striped", "hover")) |>
     scroll_box(height = "400px")
 
-knitr::asis_output("<p style='margin-top: 8px;'><em>Note:</em> Only the first 50 rows are shown.</p>")
+knitr::asis_output("
+<p style='margin-top: 8px;'><em>Note:</em> Only the first 50 rows are shown.</p>
+<p><em>Note:</em> The <code>dominant_pattern</code> column was added by assigning each cell to the pattern with the highest score across all patterns in the P matrix.</p>
+")
 ```
 
 ### Genes
@@ -130,6 +133,14 @@ knitr::asis_output("<p style='margin-top: 8px;'><em>Note:</em> Only the first 50
 #| out-width: 100%
 include_graphics(params$weight_nmf)
 ```
+
+## Score 
+
+```{r fig-heatmap_score}
+#| out-width: 100%
+include_graphics(params$heatmap_score_pg)
+```
+
 
 ## UMAP — Dominant pattern
 
@@ -200,7 +211,7 @@ read_csv(params$pairwise_csv, show_col_types = FALSE) |>
 ::: {.panel-tabset}
 
 ### Dotplot
-
+The marker genes were generated with the `patternMarker()` function from **CoGAPS**.
 ```{r fig-dotplot}
 #| fig-cap: "Marker genes dotplot by fixing dominant pattern"
 #| out-width: 100%
