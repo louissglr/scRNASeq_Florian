@@ -35,6 +35,8 @@ params:
   png_enrich_unique: ""
   png_overr_unique: ""
   png_enrich_heatmap: ""
+  png_enrich_heatmap_manually: ""
+  png_overr_heatmap_manually: ""
   png_overr_heatmap: ""
   umap_nmf: ""
   umap_nb_cells: ""
@@ -93,6 +95,7 @@ if (file.exists(params$benchmark_tsv) && params$benchmark_tsv != "") {
     kable_styling(bootstrap_options = c("striped", "hover"))
 
 }
+knitr::asis_output("Allocated resources on GLICID: threads: 65 and mem_mb: 100 GB")
 ```
 
 ## Contributions
@@ -127,9 +130,10 @@ knitr::asis_output("<p style='margin-top: 8px;'><em>Note:</em> Only the first 50
 
 :::
 
-## UMAP — Pattern weight
-
+## UMAP — Pattern amplitudes
+UMAP embedding of cells computed from NMF pattern contribution scores (P matrix), using uwot (cosine distance metric)
 ```{r fig-weight-nmf}
+#| fig-cap: "NMF weight UMAP (based on P matrix)"
 #| out-width: 100%
 include_graphics(params$weight_nmf)
 ```
@@ -137,6 +141,7 @@ include_graphics(params$weight_nmf)
 ## Score 
 
 ```{r fig-heatmap_score}
+#| fig-cap: "Heatmap of mean pattern activity across conditions"
 #| out-width: 100%
 include_graphics(params$heatmap_score_pg)
 ```
@@ -147,8 +152,9 @@ include_graphics(params$heatmap_score_pg)
 ::: {.panel-tabset}
 
 ### NMF
-
+UMAP embedding of cells computed from NMF pattern contribution scores (P matrix), using uwot (cosine distance metric)
 ```{r fig-umap-nmf}
+#| fig-cap: "NMF dominant UMAP"
 #| out-width: 100%
 include_graphics(params$umap_nmf)
 ```
@@ -189,14 +195,14 @@ include_graphics(params$png_specificity_metagroups)
 ::: {.panel-tabset}
 
 ### Kruskal-Wallis
-
+Global non-parametric test assessing whether NMF pattern weights differ across subclones.
 ```{r tbl-kw}
 read_csv(params$kw_csv, show_col_types = FALSE) |>
     kable() |> kable_styling(bootstrap_options = c("striped", "hover"))
 ```
 
 ### Pairwise comparisons
-
+Pairwise comparisons between subclones in each patterns performed using Wilcoxon tests with BH-adjusted p-values.
 ```{r tbl-pairwise}
 read_csv(params$pairwise_csv, show_col_types = FALSE) |>
     kable() |>
@@ -210,17 +216,27 @@ read_csv(params$pairwise_csv, show_col_types = FALSE) |>
 
 ::: {.panel-tabset}
 
+### Table
+The marker genes were defined using `patternMarker(threshold = "cut")` from **CoGAPS**.
+```{r tbl}
+df <- readxl::read_excel(params$markers_excel)
+df |>
+  head(50) |>
+  knitr::kable(caption = "Top 50 Marker genes per pattern") |>
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover")) |>
+  kableExtra::scroll_box(height = "400px")
+```
+
 ### Dotplot
-The marker genes were generated with the `patternMarker()` function from **CoGAPS**.
 ```{r fig-dotplot}
-#| fig-cap: "Marker genes dotplot by fixing dominant pattern"
+#| fig-cap: "Marker genes (top 5) by fixing dominant pattern"
 #| out-width: 100%
 include_graphics(params$dotplot)
 ```
 
 :::
 
-## Hallmarks
+## Functional Annotation (Hallmarks)
 
 ::: {.panel-tabset}
 
@@ -230,10 +246,22 @@ include_graphics(params$dotplot)
 
 #### Heatmap (get_function)
 
+Gene set enrichment was assessed using a ranking-based enrichment approach implemented with `getPatternGeneSet(method = "enrichment")` from CoGAPS, which applies `fgsea::gsea` to test enrichment of genes ranked by pattern amplitude against MSigDB Hallmark gene sets (retrieved via msigdbr).
+
 ```{r fig-enrich-heatmap}
 #| fig-cap: "Hallmarks enrichment heatmap"
 #| out-width: 100%
 include_graphics(params$png_enrich_heatmap)
+```
+
+#### Heatmap (manually)
+
+The enrichment analysis was performed with the `GSEA()` function from **ClusterProfiler**, with msigdbr hallmarks.
+
+```{r fig-enrich-heatmap-manually}
+#| fig-cap: "Hallmarks enrichment heatmap (manually)"
+#| out-width: 100%
+include_graphics(params$png_enrich_heatmap_manually)
 ```
 
 #### Unique
@@ -249,23 +277,35 @@ include_graphics(params$png_enrich_unique)
 ```{r tbl-enrich}
 read_csv(params$enrich_csv, show_col_types = FALSE) |>
     select(-leadingEdge) |>
-    kable(caption = "Hallmarks enrichment") |>
+    kable(caption = "Hallmarks enrichment (get_function)") |>
     kable_styling(bootstrap_options = c("striped", "hover")) |>
     scroll_box(height = "350px")
 ```
 
 :::
 
-### Overrepresentation
+### Over-representation
 
 ::: {.panel-tabset}
 
 #### Heatmap (get_function)
 
+Gene set enrichment was assessed using an over-representation analysis (ORA) implemented with `getPatternGeneSet(method = "overrepresentation")` from CoGAPS, which applies `fgsea::fora` to test enrichment of pattern marker genes against MSigDB Hallmark gene sets (retrieved via msigdbr).
+
 ```{r fig-overr-heatmap}
 #| fig-cap: "Hallmarks overrepresentation heatmap"
 #| out-width: 100%
 include_graphics(params$png_overr_heatmap)
+```
+
+#### Heatmap (manually)
+
+The analysis was performed with the `enricher` function from **ClusterProfiler**, with msigdbr hallmarks.
+
+```{r fig-overr-heatmap-manually}
+#| fig-cap: "Hallmarks overrepresentation heatmap (manually)"
+#| out-width: 100%
+include_graphics(params$png_overr_heatmap_manually)
 ```
 
 #### Unique
@@ -280,7 +320,7 @@ include_graphics(params$png_overr_unique)
 
 ```{r tbl-overr}
 read_csv(params$overr_csv, show_col_types = FALSE) |>
-    kable(caption = "Hallmarks overrepresentation") |>
+    kable(caption = "Hallmarks overrepresentation (get_function)") |>
     kable_styling(bootstrap_options = c("striped", "hover")) |>
     scroll_box(height = "350px")
 ```
