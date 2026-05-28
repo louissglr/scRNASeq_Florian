@@ -664,6 +664,9 @@ rule render_report:
 
         enrich_csv=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/hallmarks/get_function/enrichment/{sample}.npatterns-{npatterns}.hallmarks_enrichment.csv",
         overr_csv=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/hallmarks/get_function/overrep/{sample}.npatterns-{npatterns}.hallmarks_overrepresentation.csv",
+        enrich_csv_c2=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/c2/get_function/enrichment/{sample}.npatterns-{npatterns}.c2_enrichment.csv",
+        overr_csv_c2=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/c2/get_function/overrep/{sample}.npatterns-{npatterns}.c2_overrepresentation.csv",
+
 
         kw_csv=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/statistics/{sample}.npatterns-{npatterns}.kw_results.csv",
         pairwise_csv=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/statistics/{sample}.npatterns-{npatterns}.pairwise_results.csv",
@@ -676,6 +679,8 @@ rule render_report:
 
         png_enrich_heatmap=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/hallmarks/get_function/enrichment/{sample}.npatterns-{npatterns}.hallmarks_enrichment_heatmap.png",
         png_overr_heatmap=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/hallmarks/get_function/overrep/{sample}.npatterns-{npatterns}.hallmarks_overrepresentation_heatmap.png",
+        png_enrich_c2_heatmap=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/c2/get_function/enrichment/{sample}.npatterns-{npatterns}.c2_enrichment_heatmap.png",
+        png_overr_c2_heatmap=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/c2/get_function/overrep/{sample}.npatterns-{npatterns}.c2_overrepresentation_heatmap.png",
 
         png_enrich_heatmap_manually=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/hallmarks/manually/enrichment/{sample}.npatterns-{npatterns}.hallmarks_enrichment_heatmap.png",
         png_overr_heatmap_manually=config["cogapsOutDir"] + "/{sample}/cogaps/patterns_{npatterns}/hallmarks/manually/overrep/{sample}.npatterns-{npatterns}.hallmarks_overrepresentation_heatmap.png",
@@ -735,6 +740,8 @@ rule render_report:
             -P dotplot:"{input.dotplot}" \
             -P enrich_csv:"{input.enrich_csv}" \
             -P overr_csv:"{input.overr_csv}" \
+            -P enrich_csv_c2:"{input.enrich_csv_c2}" \
+            -P overr_csv_c2:"{input.overr_csv_c2}" \
             -P kw_csv:"{input.kw_csv}" \
             -P pairwise_csv:"{input.pairwise_csv}" \
             -P png_specificity_patterns:"{input.png_specificity_patterns}" \
@@ -745,6 +752,8 @@ rule render_report:
             -P png_enrich_heatmap_manually:"{input.png_enrich_heatmap_manually}" \
             -P png_overr_heatmap:"{input.png_overr_heatmap}" \
             -P png_overr_heatmap_manually:"{input.png_overr_heatmap_manually}" \
+            -P png_enrich_c2_heatmap:"{input.png_enrich_c2_heatmap}" \
+            -P png_overr_c2_heatmap:"{input.png_overr_c2_heatmap}" \
             -P umap_nmf:"{input.umap_nmf}" \
             -P umap_nb_cells:"{input.umap_nb_cells}" \
             -P weight_nmf:"{input.weight_nmf}" \
